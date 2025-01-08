@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     sendCommand("F"); // Send 'F' for Forward
                     return true;
                 case MotionEvent.ACTION_UP: // Button released
-                    sendCommand("N"); // Send 'N' for Neutral/Stop
+                    sendCommand("S"); // Send 'N' for Neutral/Stop
                     //v.performClick(); // Call performClick for accessibility
                     return true;
             }
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     sendCommand("B");
                     return true;
                 case MotionEvent.ACTION_UP:
-                    sendCommand("N");
+                    sendCommand("S");
                     return true;
             }
             return false;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     sendCommand("L");
                     return true;
                 case MotionEvent.ACTION_UP:
-                    sendCommand("N");
+                    sendCommand("S");
                     return true;
             }
             return false;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     sendCommand("R");
                     return true;
                 case MotionEvent.ACTION_UP:
-                    sendCommand("N");
+                    sendCommand("S");
                     return true;
             }
             return false;
