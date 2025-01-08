@@ -15,14 +15,17 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateConnectionStatus(boolean isConnected) {
         if (isConnected) {
             btConnectionStatus.setText("Connection Status: Connected");
-            btConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            btConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_green_light));
         } else {
             btConnectionStatus.setText("Connection Status: Not Connected");
             btConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_red_light));
@@ -289,15 +292,10 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
                     InputStream inputStream = bluetoothSocket.getInputStream();
-                    byte[] buffer = new byte[1024];
-                    int bytes;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String receivedData;
 
-                    while (true) {
-                        // Read data from the Bluetooth input stream
-                        bytes = inputStream.read(buffer);
-                        String receivedData = new String(buffer, 0, bytes);
-
-                        // Parse and display the sensor data
+                    while ((receivedData = reader.readLine()) != null) {
                         parseAndDisplaySensorData(receivedData.trim());
                     }
                 }
@@ -307,45 +305,130 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+
+//    private void parseAndDisplaySensorData(String data) {
+//        if (data.contains("LEFT:") && data.contains("RIGHT:")) {
+//            String[] parts = data.split(";");
+//            String leftData = parts[0].replace("LEFT:", "").trim();
+//            String rightData = parts[1].replace("RIGHT:", "").trim();
+//
+//            int leftDistance = Integer.parseInt(leftData);
+//            int rightDistance = Integer.parseInt(rightData);
+//
+//            // Update the TextViews on the UI thread
+//            runOnUiThread(() -> {
+//                TextView leftSensorTextView = findViewById(R.id.leftSensorDistance);
+//                TextView rightSensorTextView = findViewById(R.id.rightSensorDistance);
+//
+//                leftSensorTextView.setText(leftDistance + " cm");
+//                rightSensorTextView.setText(rightDistance + " cm");
+//
+//                // Change border color if either distance <50
+//                if (leftDistance < 50) {
+//                    leftSensorTextView.setBackgroundResource(R.drawable.border_red);
+//                } else {
+//                    leftSensorTextView.setBackgroundResource(R.drawable.border_black);
+//                }
+//
+//                if (rightDistance < 50) {
+//                    rightSensorTextView.setBackgroundResource(R.drawable.border_red);
+//                } else {
+//                    rightSensorTextView.setBackgroundResource(R.drawable.border_black);
+//                }
+//
+//                // Vibrate if either distance is <50
+//                if (leftDistance < 50 || rightDistance < 50) {
+//                    triggerVibration(true);
+//                } else {
+//                    triggerVibration(false);
+//                }
+//            });
+//        }
+//    }
+
+//    private void parseAndDisplaySensorData(String data) {
+//        if (data.contains("LEFT:") && data.contains("RIGHT:")) {
+//            try {
+//                String[] parts = data.split(";");
+//                String leftData = parts[0].replace("LEFT:", "").trim();
+//                String rightData = parts[1].replace("RIGHT:", "").trim();
+//
+//                int leftDistance = Integer.parseInt(leftData);
+//                int rightDistance = Integer.parseInt(rightData);
+//
+//                // Update the TextViews on the UI thread
+//                runOnUiThread(() -> {
+//                    TextView leftSensorTextView = findViewById(R.id.leftSensorDistance);
+//                    TextView rightSensorTextView = findViewById(R.id.rightSensorDistance);
+//
+//                    leftSensorTextView.setText(leftDistance + " cm");
+//                    rightSensorTextView.setText(rightDistance + " cm");
+//
+//                    // Change border color if either distance <50
+//                    leftSensorTextView.setBackgroundResource(leftDistance < 50 ? R.drawable.border_red : R.drawable.border_black);
+//                    rightSensorTextView.setBackgroundResource(rightDistance < 50 ? R.drawable.border_red : R.drawable.border_black);
+//
+//                    // Vibrate if either distance is <50
+//                    triggerVibration(leftDistance < 50 || rightDistance < 50);
+//                });
+//            } catch (NumberFormatException e) {
+//                e.printStackTrace();
+//                Log.e("BluetoothData", "Error parsing distances: " + data);
+//            }
+//        } else {
+//            Log.d("BluetoothData", "Incomplete or unrecognized data: " + data);
+//        }
+//    }
+
     private void parseAndDisplaySensorData(String data) {
-        if (data.contains("LEFT:") && data.contains("RIGHT:")) {
-            String[] parts = data.split(";");
-            String leftData = parts[0].replace("LEFT:", "").trim();
-            String rightData = parts[1].replace("RIGHT:", "").trim();
+        try {
+            // Ensure the data contains both LEFT and RIGHT
+            if (data.contains("RIGHT:") && data.contains("LEFT:")) {
+                String[] parts = data.split(";");
+                String leftData = parts[1].replace("LEFT:", "").trim();
+                String rightData = parts[0].replace("RIGHT:", "").trim();
 
-            int leftDistance = Integer.parseInt(leftData);
-            int rightDistance = Integer.parseInt(rightData);
+                // Parse the distances
+                int leftDistance = Integer.parseInt(leftData);
+                int rightDistance = Integer.parseInt(rightData);
 
-            // Update the TextViews on the UI thread
-            runOnUiThread(() -> {
-                TextView leftSensorTextView = findViewById(R.id.leftSensorDistance);
-                TextView rightSensorTextView = findViewById(R.id.rightSensorDistance);
+                // Update the TextViews on the UI thread
+                runOnUiThread(() -> {
+                    TextView leftSensorTextView = findViewById(R.id.leftSensorDistance);
+                    TextView rightSensorTextView = findViewById(R.id.rightSensorDistance);
 
-                leftSensorTextView.setText(leftDistance + " cm");
-                rightSensorTextView.setText(rightDistance + " cm");
+                    leftSensorTextView.setText(leftDistance + " cm");
+                    rightSensorTextView.setText(rightDistance + " cm");
 
-                // Change border color if either distance <50
-                if (leftDistance < 50) {
-                    leftSensorTextView.setBackgroundResource(R.drawable.border_red);
-                } else {
-                    leftSensorTextView.setBackgroundResource(R.drawable.border_black);
-                }
+                    // Update borders and vibration here if needed
+                    if (leftDistance < 50) {
+                        leftSensorTextView.setBackgroundResource(R.drawable.border_red);
+                    } else {
+                        leftSensorTextView.setBackgroundResource(R.drawable.border_black);
+                    }
 
-                if (rightDistance < 50) {
-                    rightSensorTextView.setBackgroundResource(R.drawable.border_red);
-                } else {
-                    rightSensorTextView.setBackgroundResource(R.drawable.border_black);
-                }
+                    if (rightDistance < 50) {
+                        rightSensorTextView.setBackgroundResource(R.drawable.border_red);
+                    } else {
+                        rightSensorTextView.setBackgroundResource(R.drawable.border_black);
+                    }
 
-                // Vibrate if either distance is <50
-                if (leftDistance < 50 || rightDistance < 50) {
-                    triggerVibration(true);
-                } else {
-                    triggerVibration(false);
-                }
-            });
+                    // Vibrate if either distance is <50
+                    if (leftDistance < 50 || rightDistance < 50) {
+                        triggerVibration(true);
+                    } else {
+                        triggerVibration(false);
+                    }
+                });
+            } else {
+                Log.e("BluetoothApp", "Error parsing distances: " + data);
+            }
+        } catch (Exception e) {
+            Log.e("BluetoothApp", "Error parsing distances: " + data, e);
         }
     }
+
+
 
     private void triggerVibration(boolean start) {
         if (vibrator == null) {
