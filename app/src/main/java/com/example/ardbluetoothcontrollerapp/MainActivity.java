@@ -1,10 +1,10 @@
 package com.example.ardbluetoothcontrollerapp;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -17,11 +17,11 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private boolean isVibrating = false;
 
+    private ObjectAnimator rotationAnimator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
         //Initialise Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Bluetooth Boat Controller");
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // Hides the ActionBar title
+
+        // Initialize the refresh button
+        ImageButton btnRefresh = findViewById(R.id.btnRefresh);
 
         //Initialize Bluetooth
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -131,6 +138,60 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnStop.setOnClickListener(v -> sendCommand("S")); // Send 'S' for STOP
+
+        // Set click listener for the refresh button
+//        btnRefresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                rotateButton(btnRefresh);
+//
+//                // Update connection status and strength
+//                if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
+//                    updateConnectionStatus(true);
+//                } else {
+//                    updateConnectionStatus(false);
+//                }
+//                updateConnectionStrength();
+//                btnRefresh.animate().cancel();
+//            }
+//        });
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rotateButton(btnRefresh);
+
+                // Simulate refreshing process
+                new Handler().postDelayed(() -> {
+                    // Update connection status and strength
+                    if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
+                        updateConnectionStatus(true);
+                    } else {
+                        updateConnectionStatus(false);
+                    }
+                    updateConnectionStrength();
+
+                    // Stop the rotation animation
+                    stopButtonRotation();
+                }, 2000); // Simulate a delay for the refresh process (e.g., 2 seconds)
+            }
+        });
+
+    }
+
+    private void rotateButton(ImageButton btnRefresh) {
+        rotationAnimator = ObjectAnimator.ofFloat(btnRefresh, "rotation", 0f, 360f);
+        rotationAnimator.setDuration(1000); // Set duration for the rotation (1 second)
+        rotationAnimator.setRepeatCount(ObjectAnimator.INFINITE); // Repeat until explicitly stopped
+        rotationAnimator.start();
+    }
+
+    private void stopButtonRotation() {
+        if (rotationAnimator != null && rotationAnimator.isRunning()) {
+            rotationAnimator.cancel();
+            rotationAnimator = null;
+        }
     }
 
     private void updateConnectionStatus(boolean isConnected) {
@@ -401,20 +462,20 @@ public class MainActivity extends AppCompatActivity {
                     rightSensorTextView.setText(rightDistance + " cm");
 
                     // Update borders and vibration here if needed
-                    if (leftDistance < 50) {
+                    if (leftDistance < 15) {
                         leftSensorTextView.setBackgroundResource(R.drawable.border_red);
                     } else {
                         leftSensorTextView.setBackgroundResource(R.drawable.border_black);
                     }
 
-                    if (rightDistance < 50) {
+                    if (rightDistance < 15) {
                         rightSensorTextView.setBackgroundResource(R.drawable.border_red);
                     } else {
                         rightSensorTextView.setBackgroundResource(R.drawable.border_black);
                     }
 
                     // Vibrate if either distance is <50
-                    if (leftDistance < 50 || rightDistance < 50) {
+                    if (leftDistance < 15 || rightDistance < 15) {
                         triggerVibration(true);
                     } else {
                         triggerVibration(false);
@@ -438,25 +499,17 @@ public class MainActivity extends AppCompatActivity {
         if (start) {
             if (!isVibrating) {
                 isVibrating = true;
-                new Thread(() -> {
-                    while (isVibrating) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                            vibrator.vibrate(500); // Deprecated for newer Android versions
-                        }
-                        try {
-                            Thread.sleep(500); // Delay between vibrations
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                long[] vibrationPattern = {0, 500, 500};
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createWaveform(vibrationPattern, 0)); // 0 for repeating
+                } else {
+                    vibrator.vibrate(vibrationPattern, 0); // Deprecated, but works for older Android versions
+                }
             }
         } else {
-            isVibrating = false;
-            if (vibrator != null) {
-                vibrator.cancel();
+            if (isVibrating) {
+                isVibrating = false;
+                vibrator.cancel(); // Stop the vibration
             }
         }
     }

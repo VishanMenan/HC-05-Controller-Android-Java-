@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/Platinum">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_bright"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/SafetyOrange"
         android:padding="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -19,120 +18,134 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bluetooth Boat Controller"
-            android:textSize="24sp"
+            android:layout_gravity="center"
+            android:text="@string/app_name"
             android:textColor="#000000"
-            android:layout_gravity="center" />
+            android:textSize="24sp" />
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_marginTop="1dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintTop_toBottomOf="@id/btConnectionStrength"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/btnStop"
-        android:layout_marginTop="1dp">
+        app:layout_constraintTop_toBottomOf="@id/btConnectionStrength">
 
         <!-- Left Sensor Layout -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_margin="20dp"
             android:gravity="center"
-            android:layout_margin="20dp">
+            android:orientation="vertical">
 
             <!-- Left Label -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Left:"
-                android:textSize="20sp"
                 android:textColor="@android:color/black"
-                android:layout_marginBottom="8dp" />
+                android:textSize="20sp" />
 
             <!-- Left Sensor Box -->
             <TextView
                 android:id="@+id/leftSensorDistance"
                 android:layout_width="120dp"
                 android:layout_height="80dp"
+                android:background="@drawable/border_black"
+                android:gravity="center"
+                android:padding="8dp"
                 android:text="-- cm"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:gravity="center"
-                android:background="@drawable/border_black"
-                android:padding="8dp" />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <!-- Right Sensor Layout -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_margin="20dp"
             android:gravity="center"
-            android:layout_margin="20dp">
+            android:orientation="vertical">
 
             <!-- Right Label -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Right:"
-                android:textSize="20sp"
                 android:textColor="@android:color/black"
-                android:layout_marginBottom="8dp" />
+                android:textSize="20sp" />
 
             <!-- Right Sensor Box -->
             <TextView
                 android:id="@+id/rightSensorDistance"
                 android:layout_width="120dp"
                 android:layout_height="80dp"
+                android:background="@drawable/border_black"
+                android:gravity="center"
+                android:padding="8dp"
                 android:text="-- cm"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:gravity="center"
-                android:background="@drawable/border_black"
-                android:padding="8dp" />
+                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/btnRefresh"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@android:drawable/ic_popup_sync"
+        android:contentDescription="Refresh"
+        app:tint="@android:color/holo_blue_dark"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginStart="18dp"
+        app:layout_constraintTop_toTopOf="@id/btConnectionStatus"
+        app:layout_constraintBottom_toBottomOf="@id/btConnectionStrength"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="8dp"/>
 
 
     <TextView
         android:id="@+id/btConnectionStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connection Status: Not Connected"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="18dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:text="Connection Status: Not Connected"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <TextView
         android:id="@+id/btConnectionStrength"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connection Strength: Unknown"
-        android:textSize="15sp"
-        android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/btConnectionStatus"
+        android:text="Connection Strength: Unknown"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/btConnectionStatus" />
 
     <Button
         android:id="@+id/btnStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/holo_red_dark"
-        android:textColor="@android:color/white"
         android:contentDescription="Stop"
         android:text="STOP"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -144,63 +157,67 @@
     <!-- Forward Button -->
     <ImageButton
         android:id="@+id/btnForward"
-        android:contentDescription="Move Forward"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/forward_arrow"
+        android:layout_marginTop="450dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/LimeGreen"
+        android:contentDescription="Move Forward"
         android:scaleType="centerInside"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/forward_arrow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginTop="450dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!-- Backward Button -->
     <ImageButton
         android:id="@+id/btnBackward"
-        android:contentDescription="Move Backward"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/backward_arrow"
+        android:layout_marginBottom="64dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/LimeGreen"
+        android:contentDescription="Move Backward"
         android:scaleType="centerInside"
+        android:src="@drawable/backward_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginBottom="64dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <!-- Left Button -->
     <ImageButton
         android:id="@+id/btnLeft"
-        android:contentDescription="Move Left"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/left_arrow"
+        android:layout_marginStart="80dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/LimeGreen"
+        android:contentDescription="Move Left"
         android:scaleType="centerInside"
+        android:src="@drawable/left_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.785"
-        android:layout_marginStart="80dp" />
+        app:layout_constraintVertical_bias="0.785" />
 
     <!-- Right Button -->
     <ImageButton
         android:id="@+id/btnRight"
-        android:contentDescription="Move Right"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/right_arrow"
+        android:layout_marginEnd="80dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/LimeGreen"
+        android:contentDescription="Move Right"
         android:scaleType="centerInside"
+        android:src="@drawable/right_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.785"
-        android:layout_marginEnd="80dp" />
+        app:layout_constraintVertical_bias="0.785" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
